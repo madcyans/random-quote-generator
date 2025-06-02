@@ -3,19 +3,23 @@ import React, { useState } from 'react';
 // A sample list of quotes. This array can later be replaced by data from an API.
 const quotes = [
   { text: "The best way to predict the future is to invent it.", author: "Alan Kay" },
-  { text: "Life is 10% what happens to us and 90% how we react to it.", author: "Charles R. Swindoll" },
-  { text: "Your time is limited, so don't waste it living someone else's life.", author: "Steve Jobs" },
-  { text: "The mind is everything. What you think you become.", author: "Buddha" },
+  { text: "The best way to predict your future is to create it.", author: "Abraham Lincoln" },
+  { text: "Fix the cause, not the symptom.", author: "Steve Maguire" },
+  { text: "The most dangerous phrase in the language is, ‘We’ve always done it this way.’", author: "Buddha" },
+  { text: "In the beginner’s mind, there are many possibilities; in the expert’s mind, there are few.", author: "Shunryu Suzuki"},
+  { text: "You might not think that programmers are artists, but programming is an extremely creative profession. It’s logic-based creativity.", author: "John Romero"},
+  { text: "Code is like humor. When you have to explain it, it’s bad.", author: "Cory House" },
 ];
 
 // Define an array of background colors for the animation.
 const colors = [
-  "#ff5722", // deep orange
-  "#9c27b0", // purple
-  "#2196f3", // blue
-  "#4caf50", // green
-  "#ffeb3b", // yellow
-  "#f44336", // red
+  "#ffadad", // pastel red
+  "#ffd6a5", // pastel peach
+  "#fdffb6", // pastel yellow
+  "#caffbf", // pastel green
+  "#9bf6ff", // pastel cyan
+  "#a0c4ff", // pastel blue
+  "#bdb2ff", // pastel lavender
 ];
 
 function QuoteMachine() {
@@ -58,11 +62,11 @@ function QuoteMachine() {
   };
 
   return (
-    // Wrapper element with id="quote-box" (User Story #1)
+    // Wrapper element with id="quote-box"
     <div
     id="quote-box"
     style={{
-      backgroundColor: bgColor,
+      backgroundColor: "radial-gradient(circle, ${bgColor} 70%, #ffffff 100%)",
       transition: "background-color 1s ease-in-out",
       display: "flex",
       flexDirection: "column",
@@ -83,14 +87,27 @@ function QuoteMachine() {
         }}
         >
         {/* Element with id="text" displays the quote (User Stories #2 and #6) */}
-        <p id="text" style={{ fontSize: "1.5em", marginBottom: "20px", textAlign: "center", opacity: fade ? 1 : 0, transition: "opacity 0.5s ease-in-out" }}> 
+        <p id="text" style={{ 
+          fontSize: "1.5em", 
+          marginBottom: "20px", 
+          textAlign: "center", 
+          opacity: fade ? 1 : 0, 
+          transition: "opacity 0.5s ease-in-out" 
+          }}> 
             {currentQuote.text}
         </p>
         {/* Element with id="author" displays the quote's author (User Stories #3 and #7) */}
-        <p id="author" style={{ textAlign: "right", fontStyle: "italic", marginBottom: "20px" }}>
+        <p id="author" style={{ 
+          textAlign: "right", 
+          fontStyle: "italic", 
+          marginBottom: "20px" }}>
             - {currentQuote.author}
         </p>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div style={{ 
+          display: "flex", 
+          justifyContent: "space-between" 
+          }}>
+            
             {/* Clickable element (a button) with id="new-quote" updates the quote (User Stories #4, #8, and #9) */}
             <button
             id="new-quote"
