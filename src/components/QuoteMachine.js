@@ -36,18 +36,27 @@ function QuoteMachine() {
   const [bgColor, setBgColor] = useState(colors[0]); // Set the initial background color to the first color in the array
   const [fade, setFade] = useState(true); // State variable to control the fade effect
 
-  // Update the quote(currentQuote) when the user clicks the button
+  // Updates the quote when the user clicks the button.
   const handleNewQuote = () => {
     // Fade out the text.
     setFade(false);
-
-    // Wait 500ms for the fade-out animation to complete.
     setTimeout(() => {
-    // Use the current unusedQuotes array, or reset to a full copy if all quotes have been used.
-      let availableQuotes = unusedQuotes.length ? unusedQuotes : [...quotes];
-      const { selected, remaining } = getRandomQuoteAndRemove(availableQuotes); // Get a new random quote and the remaining quotes
-      setCurrentQuote(selected); // Update the current quote
-      setUnusedQuotes(remaining); // Update the unused quotes
+      let availableQuotes;
+      // If there are still unused quotes, use those.
+      if (unusedQuotes.length > 0) {
+        availableQuotes = unusedQuotes;
+      } else {
+        // All quotes have been used.
+        // If there's more than one quote, filter out the current one to avoid an immediate repeat.
+        availableQuotes = quotes.length > 1 
+          ? quotes.filter(q => q.text !== currentQuote.text)
+          : [...quotes];
+      }
+      
+      // Pick a random quote from the available pool.
+      const { selected, remaining } = getRandomQuoteAndRemove(availableQuotes);
+      setCurrentQuote(selected);
+      setUnusedQuotes(remaining);
 
       // Choose a new background color that's different from the current one.
       let newColor = colors[Math.floor(Math.random() * colors.length)];
@@ -66,7 +75,7 @@ function QuoteMachine() {
     <div
     id="quote-box"
     style={{
-      backgroundColor: "radial-gradient(circle, ${bgColor} 70%, #ffffff 100%)",
+      backgroundColor: bgColor,
       transition: "background-color 1s ease-in-out",
       display: "flex",
       flexDirection: "column",
@@ -81,26 +90,52 @@ function QuoteMachine() {
             backgroundColor: "#f5f5f5",
             border: "2px solid #333",
             borderRadius: "10px",
-            padding: "30px",
+            padding: "clamp(30px, 5vw, 50px",
             maxWidth: "600px",
             width: "100%",
         }}
         >
-        {/* Element with id="text" displays the quote (User Stories #2 and #6) */}
+        <div
+          id="quote-text-container"
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            textAlign: "left",
+            opacity: fade ? 1 : 0,
+            transition: "opacity 0.5s ease-in-out",
+          }}
+        >
+          {/* Opening Quote Symbol */}
+          <span
+            style={{
+              fontFamily: "'Georgia', serif",
+              fontSize: "5em", // Opening quote symbol
+              color: "#ccc",
+              display: "block",
+              marginBottom: "-0.2em",
+            }}
+          >
+            “
+          </span>
+        {/* Element with id="text" displays the quote */}
         <p id="text" style={{ 
-          fontSize: "1.5em", 
+          fontFamily: "'Georgia', serif",
+          fontSize: "clamp(1.5em, 4vw, 2em)", 
           marginBottom: "20px", 
           textAlign: "center", 
           opacity: fade ? 1 : 0, 
           transition: "opacity 0.5s ease-in-out" 
-          }}> 
-            {currentQuote.text}
+          }}>
+            {currentQuote.text}  
         </p>
-        {/* Element with id="author" displays the quote's author (User Stories #3 and #7) */}
+      </div>
+        {/* Element with id="author" displays the quote's author */}
         <p id="author" style={{ 
           textAlign: "right", 
           fontStyle: "italic", 
-          marginBottom: "20px" }}>
+          marginBottom: "20px",
+          fontSize: "clamp(1em, 3vw, 1.5em)" 
+          }}>
             - {currentQuote.author}
         </p>
         <div style={{ 
@@ -108,7 +143,7 @@ function QuoteMachine() {
           justifyContent: "space-between" 
           }}>
             
-            {/* Clickable element (a button) with id="new-quote" updates the quote (User Stories #4, #8, and #9) */}
+          {/* Clickable element (a button) with id="new-quote" updates the quote */}
             <button
             id="new-quote"
             onClick={handleNewQuote}
@@ -124,7 +159,16 @@ function QuoteMachine() {
             >
                 New Quote
             </button>
-            {/* Clickable a element with id="tweet-quote" allows tweeting the quote (User Stories #5 and #10) */}
+
+            {/* Group of share buttons aligned on the right */}
+          <div
+            style={{
+              marginLeft: "auto",
+              display: "flex",
+              gap: "8px", // Smaller gap for the share buttons
+            }}
+          >
+            {/* Clickable a element with id="tweet-quote" allows tweeting the quote */}
             <button 
                 id="tweet-quote"
                 onClick={() => window.open(
@@ -146,9 +190,37 @@ function QuoteMachine() {
             >
                 <i className="fa-brands fa-twitter"></i>
             </button>
+            {/* Facebook Share Button */}
+            <button
+              id="facebook-quote"
+              onClick={() =>
+                window.open(
+                  `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                    window.location.href
+                  )}&quote=${encodeURIComponent(
+                    `"${currentQuote.text}" - ${currentQuote.author}`
+                  )}`,
+                  "_blank",
+                  "noopener,noreferrer"
+                )
+              }
+              style={{
+                backgroundColor: "#4267B2",
+                color: "#fff",
+                border: "none",
+                padding: "10px 20px",
+                borderRadius: "5px",
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+            >
+              <i className="fa-brands fa-facebook" style={{ marginRight: "5px" }}></i>
+            </button>
             </div>
         </div>
-        </div>
+      </div>
+    </div>
   );
 }
 
